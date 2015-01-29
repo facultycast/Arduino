@@ -1,0 +1,85 @@
+/*
+  Example for different sending methods
+  
+  http://code.google.com/p/rc-switch/
+  
+*/
+
+#include <RCSwitch.h>
+
+RCSwitch mySwitch = RCSwitch();
+
+char inData[20]; // Allocate some space for the string
+char inChar=-1; // Where to store the character read
+byte index = 0; // Index into array; where to store the character
+
+void setup() {
+
+  Serial.begin(9600);
+  
+  // Transmitter is connected to Arduino Pin #10  
+  mySwitch.enableTransmit(10);
+
+  // Optional set pulse length.
+  // mySwitch.setPulseLength(320);
+  
+  // Optional set protocol (default is 1, will work for most outlets)
+  // mySwitch.setProtocol(2);
+  
+  // Optional set number of transmission repetitions.
+  // mySwitch.setRepeatTransmit(15);
+  
+}
+
+char Comp(char* This) {
+    while (Serial.available() > 0) // Don't read unless
+                                   // there you know there is data
+    {
+        if(index < 19) // One less than the size of the array
+        {
+            inChar = Serial.read(); // Read a character
+            inData[index] = inChar; // Store it
+            index++; // Increment where to write next
+            inData[index] = '\0'; // Null terminate the string
+        }
+    }
+
+    if (strcmp(inData,This)  == 0) {
+        for (int i=0;i<19;i++) {
+            inData[i]=0;
+        }
+        index=0;
+        return(0);
+    }
+    else {
+        return(1);
+    }
+}
+
+void loop() {
+  
+    if (Comp("1on")==0) {
+        Serial.write("Switch 1 -> Online\n");
+        mySwitch.send(35754004, 26);
+    }
+    if (Comp("1off")==0) {
+        Serial.write("Switch 1 -> Offline\n");
+        mySwitch.send(18976788, 26);
+    }
+    if (Comp("2on")==0) {
+        Serial.write("Switch 1 -> Online\n");
+        mySwitch.send(35751956, 26);
+    }
+    if (Comp("2off")==0) {
+        Serial.write("Switch 1 -> Offline\n");
+        mySwitch.send(18974740, 26);
+    }
+    if (Comp("3on")==0) {
+        Serial.write("Switch 1 -> Online\n");
+        mySwitch.send(35756052, 26);
+    }
+    if (Comp("3off")==0) {
+        Serial.write("Switch 1 -> Offline\n");
+        mySwitch.send(18978836, 26);
+    } 
+}
